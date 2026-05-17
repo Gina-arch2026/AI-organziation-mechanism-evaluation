@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>三原力联动自检清单</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-600: #4b5563;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: white;
+            padding: 32px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 15px;
+        }
+        
+        .intro {
+            background: #f0f9ff;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        
+        .intro p {
+            color: var(--gray-800);
+            font-size: 14px;
+        }
+        
+        .progress-bar {
+            height: 4px;
+            background: var(--gray-200);
+            position: relative;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #10b981, #3b82f6);
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+        
+        .progress-text {
+            text-align: center;
+            padding: 12px;
+            color: var(--gray-600);
+            font-size: 14px;
+            background: var(--gray-50);
+        }
+        
+        .section {
+            padding: 24px;
+            border-bottom: 1px solid var(--gray-100);
+        }
+        
+        .section:last-child {
+            border-bottom: none;
+        }
+        
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .section-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        
+        .section-icon.performance { background: #dbeafe; }
+        .section-icon.salary { background: #fef3c7; }
+        .section-icon.promotion { background: #d1fae5; }
+        .section-icon.linkage { background: #ede9fe; }
+        
+        .section-title h2 {
+            font-size: 18px;
+            color: var(--gray-900);
+        }
+        
+        .question {
+            margin-bottom: 24px;
+            padding: 20px;
+            background: var(--gray-50);
+            border-radius: 12px;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .question:last-child {
+            margin-bottom: 0;
+        }
+        
+        .question-number {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 24px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+        
+        .question-text {
+            font-size: 15px;
+            color: var(--gray-900);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .question-hint {
+            font-size: 13px;
+            color: var(--gray-600);
+            margin-bottom: 16px;
+            font-style: italic;
+        }
+        
+        .options {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .option {
+            flex: 1;
+            padding: 12px 20px;
+            border: 2px solid var(--gray-200);
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            background: white;
+        }
+        
+        .option:hover {
+            border-color: var(--primary);
+            background: #f0f9ff;
+        }
+        
+        .option.selected {
+            border-color: var(--primary);
+            background: var(--primary);
+            color: white;
+        }
+        
+        .option.selected.yes {
+            background: var(--success);
+            border-color: var(--success);
+        }
+        
+        .option.selected.no {
+            background: var(--gray-600);
+            border-color: var(--gray-600);
+        }
+        
+        .submit-section {
+            padding: 32px 24px;
+            text-align: center;
+            background: var(--gray-50);
+        }
+        
+        .submit-btn {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            padding: 16px 48px;
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+        }
+        
+        .submit-btn:disabled {
+            background: var(--gray-300);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        /* Results */
+        .result-card {
+            display: none;
+        }
+        
+        .result-header {
+            padding: 32px;
+            text-align: center;
+        }
+        
+        .score-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            font-weight: 700;
+            color: white;
+        }
+        
+        .score-circle.unstarted { background: linear-gradient(135deg, #6b7280, #4b5563); }
+        .score-circle.friction { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .score-circle.exploring { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+        .score-circle.emerging { background: linear-gradient(135deg, #10b981, #059669); }
+        
+        .diagnosis-label {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 8px;
+        }
+        
+        .stage-label {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .stage-label.unstarted { background: #e5e7eb; color: #4b5563; }
+        .stage-label.friction { background: #fef3c7; color: #92400e; }
+        .stage-label.exploring { background: #dbeafe; color: #1e40af; }
+        .stage-label.emerging { background: #d1fae5; color: #065f46; }
+        
+        .section-scores {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            padding: 24px;
+            background: var(--gray-50);
+        }
+        
+        .section-score {
+            background: white;
+            padding: 16px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .section-score-title {
+            font-size: 13px;
+            color: var(--gray-600);
+            margin-bottom: 8px;
+        }
+        
+        .section-score-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+        
+        .section-score-value span {
+            font-size: 14px;
+            color: var(--gray-400);
+            font-weight: 400;
+        }
+        
+        .diagnosis-section {
+            padding: 24px;
+            border-top: 1px solid var(--gray-100);
+        }
+        
+        .diagnosis-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .diagnosis-text {
+            font-size: 14px;
+            color: var(--gray-700);
+            padding: 16px;
+            background: var(--gray-50);
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+        
+        .suggestions {
+            padding: 16px;
+            background: #f0fdf4;
+            border-radius: 8px;
+            border-left: 4px solid var(--success);
+        }
+        
+        .suggestions h4 {
+            font-size: 14px;
+            color: #065f46;
+            margin-bottom: 12px;
+        }
+        
+        .suggestions ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .suggestions li {
+            font-size: 14px;
+            color: var(--gray-700);
+            padding: 8px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        .suggestions li::before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: var(--success);
+        }
+        
+        .final-note {
+            padding: 24px;
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-radius: 0 0 16px 16px;
+        }
+        
+        .final-note p {
+            font-size: 14px;
+            color: #92400e;
+            line-height: 1.8;
+        }
+        
+        .share-section {
+            padding: 24px;
+            text-align: center;
+            border-top: 1px solid var(--gray-100);
+        }
+        
+        .share-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 32px;
+            font-size: 15px;
+            font-weight: 500;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 0 8px;
+            transition: background 0.2s;
+        }
+        
+        .share-btn:hover {
+            background: var(--primary-dark);
+        }
+        
+        .share-btn.secondary {
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+        
+        .share-btn.secondary:hover {
+            background: #f0f9ff;
+        }
+        
+        .copy-link {
+            display: none;
+            margin-top: 16px;
+            padding: 12px;
+            background: var(--gray-50);
+            border-radius: 8px;
+            font-size: 13px;
+            color: var(--gray-600);
+            word-break: break-all;
+        }
+        
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--gray-900);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 1000;
+        }
+        
+        .toast.show {
+            opacity: 1;
+        }
+        
+        @media (max-width: 600px) {
+            body {
+                padding: 12px;
+            }
+            
+            .header h1 {
+                font-size: 22px;
+            }
+            
+            .section-scores {
+                grid-template-columns: 1fr;
+            }
+            
+            .options {
+                flex-direction: column;
+            }
+            
+            .share-btn {
+                display: block;
+                width: 100%;
+                margin: 8px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 问卷卡片 -->
+        <div class="card questionnaire-card">
+            <div class="header">
+                <h1>三原力联动自检清单</h1>
+                <p>测测你的组织在AI时代的人才定价能力</p>
+            </div>
+            
+            <div class="intro">
+                <p><strong>问卷说明：</strong>本问卷共12题，每题选择"是"得1分，选择"否"得0分。3分钟完成，测完即出诊断。</p>
+            </div>
+            
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text" id="progressText">已完成 0/12 题</div>
+            
+            <form id="questionnaireForm">
+                <!-- 板块一：绩效力 -->
+                <div class="section">
+                    <div class="section-title">
+                        <div class="section-icon performance">📊</div>
+                        <h2>板块一：绩效力</h2>
+                    </div>
+                    
+                    <div class="question" data-question="1">
+                        <div class="question-text"><span class="question-number">1</span>你的绩效指标能区分"做了什么"和"判断了什么"吗？</div>
+                        <div class="question-hint">例：写完一份分析报告是"做了什么"，决定放弃某个市场是"判断了什么"——你的绩效能分清吗？</div>
+                        <div class="options">
+                            <div class="option" data-value="yes" onclick="selectOption(1, 'yes')">是</div>
+                            <div class="option" data-value="no" onclick="selectOption(1, 'no')">否</div>
+                        </div>
+                    </div>
+                    
+                    <div class="question" data-question="2">
+                        <div class="question-text"><span class="question-number">2</span>"人+AI协作产出"在你的绩效中有单独衡量吗？</div>
+                        <div class="question-hint">你调教AI产生的成果，在绩效表上能找到对应的格子吗？</div>
+                        <div class="options">
+                            <div class="option" data-value="yes" onclick="selectOption(2, 'yes')">是</div>
+                            <div class="option" data-value="no" onclick="selectOption(2, 'no')">否</div>
+                        </div>
+                    </div>
+                    
+                    <div class="question" data-question="3">
+                        <div class="question-text"><span class="question-number">3</span>AI为你省出的时间，流向了哪里——这个流向被绩效评估覆盖吗？</div>
+                        <div class="question-hint">用AI省下3小时，这3小时你做了什么？公司知道吗？评估吗？</div>
+                        <div class="options">
+                            <div class="option" data-value="yes" onclick="selectOption(3, 'yes')">是</div>
+                            <div class="option" data-value="no" onclick="selectOption(3, 'no')">否</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 板块二：薪酬力 -->
+                <div class="section">
+                    <div class="section-title">
+                        <div class="section-icon salary">💰</div>
+                        <h2>板块二：薪酬力</h2>
+                    </div>
+                    
+                    <div class="question" data-question="4">
+                        <div class="question-text"><span class="question-number">4</span>同一职级下，AI杠杆率高的人和不怎么用AI的人，薪酬有显著差异吗？</div>
+                        <div class="question-hint">和你同级别但调教AI能力完全不同的人，你们薪酬差多少？</div>
+                        <div class="options">
+                            <div class="option" data-value="yes" onclick="selectOption(4, 'yes')">是</div>
+                            <div class="option" data-value="no" onclick="selectOption(4, 'no')">否</div>
+                        </div>
+                    </div>
+                    
+                    <div class="question" data-question="5">
+                        <div class="question-text"><span class="question-number">5</span>公司有没有为"判断力"付薪的机制？</div>
+                        <div class="question-hint">你做了一个影响业务的判断——这个判断本身值钱吗？还是只付钱给执行结果？</div>
+                        <div class="options">
+                            <div class="option" data-value="yes" onclick="selectOption(5, 'yes')">是</div>
+                            <div class="option" data-value="no" onclick="selectOption(5, 'no')">否</div>
+                        </div>
+                    </div>
+                    
+                    <div class="question" data-question="6">
+                        <div class="question-text"><span class="question-number">6</span>被AI替代的岗位，其薪酬带宽被压缩了吗？还是在用旧标准维持？</div>
+                        <div class="question-hint">那些已经被AI吃掉一半工作量的岗位，薪酬体系调整了吗？</div>
+                        <div class="options">
+                            <div class="option" data-value="yes" onclick="selectOption(6, 'yes')">是</div>
+                            <div class="option" data-value="no" onclick="selectOption(6, 'no')">否</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 板块三：晋升力 -->
+                <div class="section">
+                    <div class="section-title">
+                        <div class="section-icon promotion">🚀</div>
+                        <h2>板块三：晋升力</h2>
+                    </div>
+                    
+                    <div class="question" data-question="7">
+                        <div class="question-text"><span class="question-number">7</span>晋升标准里有"判断密度"相关的指标吗？</div>
+                        <div class="question-hint">"每年做了多少次关键判断"——这个东西在你们晋升打分表里存在吗？</div>
+                        <div class="options">
+                            <div class="option" data-value="yes" onclick="selectOption(7, 'yes')">是</div>
+                            <div class="option" data-value="no" onclick="selectOption(7, 'no')">否</div>
+                        </div>
+                    </div>
+                    
+                    <div class="question" data-question="8">
+                        <div class="question-text"><span class="question-number">8</span>公司会把"会用AI"误判为"能力跃迁"直接晋升吗？</div>
+                        <div class="question-hint">有人因为AI产出多被当成能力提升而晋升——但他的判断力真的变强了吗？</div>
+                        <div class="options">
+                            <div class="option" data-value="yes" onclick="selectOption(8, 'yes')">是</div>
+                            <div class="option" data-value="no" onclick="selectOption(8, 'no')">否</div>
+                        </div>
+                    </div>
+                    
+                    <div class="question" data-question="9">
+                        <div class="question-text"><span class="question-number">9</span>新旧晋升标准是否并存？</div>
+                        <div class="question-hint">"能管10人"和"能调度10个Agent"这两个标准，在你们晋升体系里哪个更值钱？它们打架吗？</div>
+                        <div class="options">
+                            <div class="option" data-value="yes" onclick="selectOption(9, 'yes')">是</div>
+                            <div class="option" data-value="no" onclick="selectOption(9, 'no')">否</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 板块四：联动检测 -->
+                <div class="section">
+                    <div class="section-title">
+                        <div class="section-icon linkage">🔗</div>
+                        <h2>板块四：联动检测</h2>
+                    </div>
+                    
+                    <div class="question" data-question="10">
+                        <div class="question-text"><span class="question-number">10</span>改了晋升标准之后，绩效评估方式跟上了吗？</div>
+                        <div class="question-hint">晋升开始看判断力了，但绩效考核还在看代码行数和PPT页数？</div>
+                        <div class="options">
+                            <div class="option" data-value="yes" onclick="selectOption(10, 'yes')">是</div>
+                            <div class="option" data-value="no" onclick="selectOption(10, 'no')">否</div>
+                        </div>
+                    </div>
+                    
+                    <div class="question" data-question="11">
+                        <div class="question-text"><span class="question-number">11</span>改了绩效标准之后，薪酬兑现了吗？</div>
+                        <div class="question-hint">绩效开始评估判断力了，但薪酬没变——多出来的判断力被白嫖了吗？</div>
+                        <div class="options">
+                            <div class="option" data-value="yes" onclick="selectOption(11, 'yes')">是</div>
+                            <div class="option" data-value="no" onclick="selectOption(11, 'no')">否</div>
+                        </div>
+                    </div>
+                    
+                    <div class="question" data-question="12">
+                        <div class="question-text"><span class="question-number">12</span>三个力改了，基础设施建了吗？</div>
+                        <div class="question-hint">Agent权限、人机协作规则、技能传播机制——这些东西存在吗？还是改了制度但没有土壤？</div>
+                        <div class="options">
+                            <div class="option" data-value="yes" onclick="selectOption(12, 'yes')">是</div>
+                            <div class="option" data-value="no" onclick="selectOption(12, 'no')">否</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="submit-section">
+                    <button type="button" class="submit-btn" id="submitBtn" onclick="showResults()" disabled>提交并查看诊断</button>
+                </div>
+            </form>
+        </div>
+        
+        <!-- 结果卡片 -->
+        <div class="card result-card" id="resultCard">
+            <div class="result-header">
+                <div class="score-circle" id="scoreCircle">0</div>
+                <div class="diagnosis-label" id="diagnosisLabel">未启动期</div>
+                <div class="stage-label" id="stageLabel">你的组织还没开始给人+AI资产定价</div>
+            </div>
+            
+            <div class="section-scores">
+                <div class="section-score">
+                    <div class="section-score-title">绩效力</div>
+                    <div class="section-score-value" id="performanceScore">0<span>/3</span></div>
+                </div>
+                <div class="section-score">
+                    <div class="section-score-title">薪酬力</div>
+                    <div class="section-score-value" id="salaryScore">0<span>/3</span></div>
+                </div>
+                <div class="section-score">
+                    <div class="section-score-title">晋升力</div>
+                    <div class="section-score-value" id="promotionScore">0<span>/3</span></div>
+                </div>
+                <div class="section-score">
+                    <div class="section-score-title">联动检测</div>
+                    <div class="section-score-value" id="linkageScore">0<span>/3</span></div>
+                </div>
+            </div>
+            
+            <div class="diagnosis-section">
+                <div class="diagnosis-title">📋 核心诊断</div>
+                <div class="diagnosis-text" id="coreDiagnosis"></div>
+            </div>
+            
+            <div class="diagnosis-section">
+                <div class="diagnosis-title">💡 各板块诊断</div>
+                <div id="sectionDiagnoses"></div>
+            </div>
+            
+            <div class="diagnosis-section">
+                <div class="diagnosis-title">🎯 行动建议</div>
+                <div class="suggestions" id="suggestions"></div>
+            </div>
+            
+            <div class="final-note">
+                <p><strong>📌 最后统一追加一条（所有人显示）：</strong><br><br>
+                你今天的诊断结果，本身就是一个判断。6个月后回来重测一次——如果你的分数变了，说明你的组织在进化；如果你推动它变了，说明你进化了。<br><br>
+                把你的判断发给我，我帮你写成"框架验证档案"——这会成为你在AI时代最稀缺的职业资产。</p>
+            </div>
+            
+            <div class="share-section">
+                <button class="share-btn" onclick="copyShareLink()">📋 复制分享链接</button>
+                <button class="share-btn secondary" onclick="retakeQuiz()">🔄 重新测试</button>
+                <div class="copy-link" id="copyLink"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="toast" id="toast">链接已复制到剪贴板</div>
+    
+    <script>
+        // 答案存储
+        let answers = {};
+        
+        // 从URL参数加载答案
+        function loadFromURL() {
+            const params = new URLSearchParams(window.location.search);
+            const data = params.get('r');
+            if (data) {
+                try {
+                    answers = JSON.parse(atob(data));
+                    // 自动填充答案
+                    Object.keys(answers).forEach(q => {
+                        selectOption(parseInt(q), answers[q], false);
+                    });
+                    updateProgress();
+                    // 如果所有问题都已回答，自动显示结果
+                    if (Object.keys(answers).length === 12) {
+                        showResults(false);
+                    }
+                } catch (e) {
+                    console.error('Failed to parse URL data');
+                }
+            }
+        }
+        
+        // 选择答案
+        function selectOption(questionNum, value, updateUI = true) {
+            answers[questionNum] = value;
+            
+            if (updateUI) {
+                // 更新UI
+                const questionDiv = document.querySelector(`[data-question="${questionNum}"]`);
+                const options = questionDiv.querySelectorAll('.option');
+                options.forEach(opt => {
+                    opt.classList.remove('selected', 'yes', 'no');
+                    if (opt.dataset.value === value) {
+                        opt.classList.add('selected', value);
+                    }
+                });
+                
+                updateProgress();
+            } else {
+                // 仅更新UI，不记录
+                const questionDiv = document.querySelector(`[data-question="${questionNum}"]`);
+                const options = questionDiv.querySelectorAll('.option');
+                options.forEach(opt => {
+                    opt.classList.remove('selected', 'yes', 'no');
+                    if (opt.dataset.value === value) {
+                        opt.classList.add('selected', value);
+                    }
+                });
+            }
+        }
+        
+        // 更新进度
+        function updateProgress() {
+            const answered = Object.keys(answers).length;
+            const percentage = (answered / 12) * 100;
+            
+            document.getElementById('progressFill').style.width = percentage + '%';
+            document.getElementById('progressText').textContent = `已完成 ${answered}/12 题`;
+            
+            // 启用/禁用提交按钮
+            document.getElementById('submitBtn').disabled = answered < 12;
+        }
+        
+        // 显示结果
+        function showResults(scrollToResult = true) {
+            // 计算各板块分数
+            const performanceScore = [1, 2, 3].filter(q => answers[q] === 'yes').length;
+            const salaryScore = [4, 5, 6].filter(q => answers[q] === 'yes').length;
+            const promotionScore = [7, 8, 9].filter(q => answers[q] === 'yes').length;
+            const linkageScore = [10, 11, 12].filter(q => answers[q] === 'yes').length;
+            const totalScore = performanceScore + salaryScore + promotionScore + linkageScore;
+            
+            // 确定诊断结果
+            let diagnosis, stageText, stageClass;
+            if (totalScore <= 3) {
+                diagnosis = '未启动期';
+                stageText = '你的组织还没开始给人+AI资产定价';
+                stageClass = 'unstarted';
+            } else if (totalScore <= 7) {
+                diagnosis = '摩擦期';
+                stageText = '组织意识到了，但绩效/薪酬/晋升在打架';
+                stageClass = 'friction';
+            } else if (totalScore <= 10) {
+                diagnosis = '探路期';
+                stageText = '单个板块有突破，但三原力没联动';
+                stageClass = 'exploring';
+            } else {
+                diagnosis = '涌现期';
+                stageText = '三原力联动开始形成新的人才定价体系';
+                stageClass = 'emerging';
+            }
+            
+            // 更新结果UI
+            const scoreCircle = document.getElementById('scoreCircle');
+            scoreCircle.textContent = totalScore;
+            scoreCircle.className = 'score-circle ' + stageClass;
+            
+            document.getElementById('diagnosisLabel').textContent = diagnosis;
+            document.getElementById('stageLabel').textContent = stageText;
+            document.getElementById('stageLabel').className = 'stage-label ' + stageClass;
+            
+            document.getElementById('performanceScore').innerHTML = performanceScore + '<span>/3</span>';
+            document.getElementById('salaryScore').innerHTML = salaryScore + '<span>/3</span>';
+            document.getElementById('promotionScore').innerHTML = promotionScore + '<span>/3</span>';
+            document.getElementById('linkageScore').innerHTML = linkageScore + '<span>/3</span>';
+            
+            // 生成诊断内容
+            generateDiagnoses(totalScore, performanceScore, salaryScore, promotionScore, linkageScore);
+            
+            // 显示结果卡片
+            document.querySelector('.questionnaire-card').style.display = 'none';
+            document.getElementById('resultCard').style.display = 'block';
+            
+            if (scrollToResult) {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+        
+        // 生成诊断内容
+        function generateDiagnoses(total, perf, salary, promo, link) {
+            // 核心诊断
+            const coreDiagnoses = {
+                'unstarted': '你的组织还在用管理期的定价体系，处理涌现期的人才——好比用固定电话的收费标准收5G资费。',
+                'friction': '组织已经感知到变化，但绩效、薪酬、晋升三个系统在互相打架——一个在改，另一个在拖。',
+                'exploring': '单个板块已有突破，但联动机制没建立——你的组织正在"局部涌现"。',
+                'emerging': '你的组织已经开始建立新的人才定价体系——三原力联动启动。'
+            };
+            
+            let stageClass = total <= 3 ? 'unstarted' : total <= 7 ? 'friction' : total <= 10 ? 'exploring' : 'emerging';
+            document.getElementById('coreDiagnosis').textContent = coreDiagnoses[stageClass];
+            
+            // 各板块诊断
+            const sectionDiagnoses = [];
+            
+            const perfDiagnosis = perf === 3 ? '绩效系统率先承认了人+AI协作的价值' :
+                                  perf >= 1 ? '绩效系统开始模糊感知到变化，但还没结构化' :
+                                  '你的判断力和AI协作，在绩效表上是透明人——公司只看到产出，没看到你';
+            sectionDiagnoses.push(`<div class="diagnosis-text"><strong>绩效力（${perf}/3）：</strong>${perfDiagnosis}</div>`);
+            
+            const salaryDiagnosis = salary === 3 ? '薪酬开始为AI杠杆率和判断力付钱' :
+                                    salary >= 1 ? '薪酬体系知道该变，但还没找到定价锚点' :
+                                    '你用AI创造的多余价值，被公司免费拿走了';
+            sectionDiagnoses.push(`<div class="diagnosis-text"><strong>薪酬力（${salary}/3）：</strong>${salaryDiagnosis}</div>`);
+            
+            const promoDiagnosis = promo === 3 ? '晋升体系开始区分"会用AI"和"会做判断"' :
+                                   promo >= 1 ? '晋升标准在摇摆，新旧标准并存但没决断' :
+                                   '晋升还在用工业时代的尺子量AI时代的人';
+            sectionDiagnoses.push(`<div class="diagnosis-text"><strong>晋升力（${promo}/3）：</strong>${promoDiagnosis}</div>`);
+            
+            const linkDiagnosis = link === 3 ? '三原力已开始联动，绩效改了薪酬跟、晋升跟薪酬、基础设施跟得上' :
+                                  link >= 1 ? '改了其中一个，但另外两个没跟上——缺口出现了' :
+                                  '三个系统各自为政，改了一个等于没改';
+            sectionDiagnoses.push(`<div class="diagnosis-text"><strong>联动检测（${link}/3）：</strong>${linkDiagnosis}</div>`);
+            
+            document.getElementById('sectionDiagnoses').innerHTML = sectionDiagnoses.join('');
+            
+            // 建议
+            const suggestions = {
+                'unstarted': [
+                    '第一刀：从绩效力突破。要求你的绩效目标中加入一条："本周期内所做的关键判断及结果"。哪怕没有评分权重，先让它被看见。',
+                    '不要急着改薪酬和晋升——先让"判断力"这个词出现在绩效表上。',
+                    '《变革剧场》核心观点：人才定价的变革，从来都是从"让它被看见"开始，而不是从"给它定个价"开始。'
+                ],
+                'friction': [
+                    '找到你所在板块中得分最低的那个力（绩效/薪酬/晋升），它就是你的"三原力缺口"所在。',
+                    '从"联动点"突破最有效：如果绩效改了但薪酬没跟，推动一次"AI协作产出"的薪酬校准会；如果晋升改了但绩效没跟，推动一次晋升标准的反向绩效审计。',
+                    '《变革剧场》核心观点：三原力缺口的本质不是"改得不够"，而是"没联动"。改一个不改另外两个，比不改还糟糕——因为系统会自我纠偏，把改了的那个拉回去。'
+                ],
+                'exploring': [
+                    '你已经具备了做"判断验证"的条件。选一个你正在推动的变革（绩效/薪酬/晋升任一个），用《变革剧场》三阶段模型做一个推演："6个月后，这个变革会走到哪一步？"',
+                    '写下你的判断并标注时间戳，成为你的第一份"框架验证档案"。',
+                    '《变革剧场》核心观点：探路期最稀缺的不是更多改革，而是一个敢验证自己判断的人。'
+                ],
+                'emerging': [
+                    '你现在最该做的不是继续推变革，而是记录。记录下你们联动的顺序、冲突点、和解方式——这就是下一个微软/阿里/贝壳的组织案例原型。',
+                    '把你的案例写成"框架验证档案"，《变革剧场》再版时可能收录。',
+                    '《变革剧场》核心观点：涌现期的人才是重新定义人才的人。你现在就是。'
+                ]
+            };
+            
+            let suggestionsHTML = '<h4>根据你的诊断结果，建议如下：</h4><ul>';
+            suggestions[stageClass].forEach(s => {
+                suggestionsHTML += `<li>${s}</li>`;
+            });
+            suggestionsHTML += '</ul>';
+            document.getElementById('suggestions').innerHTML = suggestionsHTML;
+        }
+        
+        // 复制分享链接
+        function copyShareLink() {
+            const data = btoa(JSON.stringify(answers));
+            const shareURL = window.location.origin + window.location.pathname + '?r=' + data;
+            
+            navigator.clipboard.writeText(shareURL).then(() => {
+                showToast('链接已复制到剪贴板');
+                document.getElementById('copyLink').style.display = 'block';
+                document.getElementById('copyLink').textContent = shareURL;
+            }).catch(() => {
+                document.getElementById('copyLink').style.display = 'block';
+                document.getElementById('copyLink').textContent = shareURL;
+                showToast('请手动复制下方链接');
+            });
+        }
+        
+        // 重新测试
+        function retakeQuiz() {
+            answers = {};
+            document.querySelector('.questionnaire-card').style.display = 'block';
+            document.getElementById('resultCard').style.display = 'none';
+            
+            // 清除所有选择
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.classList.remove('selected', 'yes', 'no');
+            });
+            
+            updateProgress();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            // 清除URL参数
+            window.history.replaceState({}, '', window.location.pathname);
+        }
+        
+        // 显示提示
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+        
+        // 页面加载时检查URL参数
+        window.onload = loadFromURL;
+    </script>
+
+<!-- AIGC: {"Label":"value1","ContentProducer":"001191110000802100433B11010001191110000802100433B11010","ProduceID":"0e7cc8ce-72ec-4593-8b38-0014b957c2df","ReservedCode1":"72dafc97cd38b92e5f3d5cdfd0dfbbe6","ContentPropagator":"001191110000802100433B11010001191110000802100433B11010","PropagateID":"04e87ee2-d54c-4b9d-b559-9be225430496","ReservedCode2":"2734827274df537123a472bf4de01eb5"} -->
+</body>
+</html>
